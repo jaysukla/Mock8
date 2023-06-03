@@ -19,8 +19,7 @@ app.post('/signup', async (req, res) => {
      
      let D = await User.insertMany([{email,password}])
     
- 
-    
+
       res.status(201).send({"msg":"Registration successfull"});
     });
     
