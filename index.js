@@ -2,7 +2,7 @@ const express = require('express');
 const {connection,User,Product} = require('./model/model')
 var jwt = require('jsonwebtoken');
 var cors = require('cors')
-const bcrypt = require('bcrypt');
+
 const app = express();
 app.use(cors())
 app.use(express.json())
@@ -16,10 +16,10 @@ app.get('/',(req,res)=>{
 
 app.post('/signup', async (req, res) => {
     let {email,password}=req.body;
-      bcrypt.hash(password, 5, async function(err, hash) {
-     let D = await User.insertMany([{email,'password':hash}])
+     
+     let D = await User.insertMany([{email,password}])
     
-    });
+ 
     
       res.status(201).send({"msg":"Registration successfull"});
     });
@@ -29,18 +29,20 @@ app.post('/signup', async (req, res) => {
     
     let {email,password} = req.body;
     let d= await User.find({email});
-    let hash =d[0].password;
+   
     
-    bcrypt.compare(password, hash, function(err, result) {
+  if(d[0].password==password){
+    var token = jwt.sign({}, 'shhhhh');
+    res.status(201).send({"msg":"login succes","token":token});
+  }else{
+    res.send({"msg":"Invalid Credentials"})
+  }
      
-    if(result==true){
-      var token = jwt.sign({}, 'shhhhh');
-      res.status(201).send({"msg":"login succes","token":token});
-    }else{
-        res.send({"msg":"Invalid Credentials"})
-    }
+
+  
     
-    });
+    
+   
     
      
     
